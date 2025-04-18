@@ -6,4 +6,4 @@
 *.obj
 *.log
 *.tmp
-
+/.vscode/
