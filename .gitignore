@@ -7,4 +7,5 @@
 *.log
 *.tmp
 /.vscode/
+/.cache/
 compile_commands.json
