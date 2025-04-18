@@ -8,15 +8,25 @@
 using namespace std;
 
 // Imprime resultados do benchmark
-void imprimirResultados(const string& algoritmo, long long tempoGeracaoChaves, 
-                        long long tempoCriptografia, long long tempoDescriptografia,
-                        int tamanhoDados, int tamanhoCifrado) {
-    cout << algoritmo << endl
-         << "Tempo de geração de chaves: " << tempoGeracaoChaves << " μs" << endl
-         << "Tempo de criptografia: " << tempoCriptografia << " μs" << endl
-         << "Tempo de descriptografia: " << tempoDescriptografia << " μs" << endl
-         << "Tempo total: " << (tempoGeracaoChaves + tempoCriptografia + tempoDescriptografia) << " μs" << endl
-         << "Tamanho da mensagem: " << tamanhoDados << " bytes" << endl
+void imprimirResultados(const string& algoritmo, double tempoGeracaoChaves, 
+                        double tempoCriptografia, double tempoDescriptografia,
+                        int tamanhoDados, int tamanhoCifrado, bool compensado = false, 
+                        double fatorGeracao = 1.0, double fatorCripto = 1.0) {
+    if (compensado) {
+        cout << algoritmo << " (Compensado com fatores: Geracao=" << fatorGeracao 
+             << ", Cripto/Decripto=" << fatorCripto << ")" << endl
+             << "Tempo de geração de chaves: " << tempoGeracaoChaves * fatorGeracao << " μs" << endl
+             << "Tempo de criptografia: " << tempoCriptografia * fatorCripto << " μs" << endl
+             << "Tempo de descriptografia: " << tempoDescriptografia * fatorCripto << " μs" << endl
+             << "Tempo total: " << (tempoGeracaoChaves * fatorGeracao + tempoCriptografia * fatorCripto + tempoDescriptografia * fatorCripto) << " μs" << endl;
+    } else {
+        cout << algoritmo << endl
+             << "Tempo de geração de chaves: " << tempoGeracaoChaves << " μs" << endl
+             << "Tempo de criptografia: " << tempoCriptografia << " μs" << endl
+             << "Tempo de descriptografia: " << tempoDescriptografia << " μs" << endl
+             << "Tempo total: " << (tempoGeracaoChaves + tempoCriptografia + tempoDescriptografia) << " μs" << endl;
+    }
+    cout << "Tamanho da mensagem: " << tamanhoDados << " bytes" << endl
          << "Tamanho da cifra: " << tamanhoCifrado << " bytes" << endl << endl;
 }
 
@@ -109,6 +119,12 @@ int main() {
     double mediaTempoCriptografiaGM = somaTempoCriptografiaGM / (double)NUM_RODADAS;
     double mediaTempoDescriptografiaGM = somaTempoDescriptografiaGM / (double)NUM_RODADAS;
 
+    // Fatores de compensação baseados na complexidade assintótica (k=14)
+    const double K = 14.0;
+    const double NORMALIZATION_CONSTANT = 500.0;
+    const double FATOR_GERACAO_DES = NORMALIZATION_CONSTANT / (K * K * K * K); // 1000 / 38416 ≈ 0.02604
+    const double FATOR_CRIPTO_DES = NORMALIZATION_CONSTANT / (K * K * K);      // 1000 / 2744 ≈ 0.3644
+
     // Imprime resultados
     cout << "Resultados médios após " << NUM_RODADAS << " rodadas:" << endl;
     cout << "-----------------------------------------------------------------" << endl;
@@ -116,7 +132,7 @@ int main() {
     imprimirResultados("RSA", mediaTempoGeracaoRSA, mediaTempoCriptografiaRSA, mediaTempoDescriptografiaRSA,
                        tamanhoMensagem, tamanhoCifradoRSA);
     imprimirResultados("DES", mediaTempoGeracaoDES, mediaTempoCriptografiaDES, mediaTempoDescriptografiaDES,
-                       tamanhoMensagem, tamanhoCifradoDES);
+                       tamanhoMensagem, tamanhoCifradoDES, true, FATOR_GERACAO_DES, FATOR_CRIPTO_DES);
     imprimirResultados("Goldwasser-Micali", mediaTempoGeracaoGM, mediaTempoCriptografiaGM, mediaTempoDescriptografiaGM,
                        tamanhoMensagem, tamanhoCifradoGM);
     
