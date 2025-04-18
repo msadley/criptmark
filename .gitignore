@@ -1,0 +1,9 @@
+# Binários
+/build/
+/*.out
+/*.exe
+/*.o
+*.obj
+*.log
+*.tmp
+
