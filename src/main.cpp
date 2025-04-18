@@ -3,7 +3,6 @@
 #include "des.h"
 #include "gm.h"
 #include <iostream>
-#include <iomanip>
 
 using namespace std;
 

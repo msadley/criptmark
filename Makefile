@@ -1,6 +1,6 @@
 # Compilador e flags
 CXX = g++
-CXXFLAGS = -Wall -Wextra -std=c++17 -Iinclude -o cryptmark
+CXXFLAGS = -Wall -Wextra -std=c++20 -Iinclude -o cryptmark
 # Diretórios
 SRC_DIR = src
 BUILD_DIR = build
